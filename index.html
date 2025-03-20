@@ -1,0 +1,1137 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Shopping Realmm</title>
+    <!-- Bootstrap 5.3.2 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Mapbox GL JS -->
+    <script src="https://api.mapbox.com/mapbox-gl-js/v2.14.1/mapbox-gl.js"></script>
+    <link href="https://api.mapbox.com/mapbox-gl-js/v2.14.1/mapbox-gl.css" rel="stylesheet">
+    <!-- Bootstrap Icons -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.3.0/font/bootstrap-icons.css">
+    <!-- Font Awesome -->
+    <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <!-- Consolidated Styles -->
+    <style>
+        /* Global Styles */
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            padding-bottom: 100px; /* Space for fixed footer */
+            overflow-x: hidden; /* Prevent horizontal scroll */
+        }
+
+        section {
+            margin-bottom: 20px;
+        }
+
+        /* Navbar Styles */
+        .navbar {
+            background-color: #633974;
+        }
+
+        .navbar-brand {
+            font-size: 1.25rem;
+        }
+
+        .dropdown-menu {
+            background-color: #633974;
+            min-width: 160px;
+            box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+        }
+
+        .dropdown-menu a {
+            color: white;
+            padding: 10px 15px;
+            text-decoration: none;
+            display: block;
+        }
+
+        .dropdown-menu a:hover {
+            background-color: #824896;
+        }
+
+        @media (min-width: 992px) {
+            .dropdown:hover .dropdown-menu {
+                display: block;
+            }
+        }
+
+        @media (max-width: 576px) {
+            .navbar-nav {
+                text-align: center;
+            }
+            .nav-item {
+                margin: 5px 0;
+            }
+            .navbar-brand {
+                font-size: 1rem;
+            }
+        }
+
+        /* Search Form Styles */
+        .search-form {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            max-width: 600px;
+            margin: 20px auto;
+            padding: 0 15px;
+            flex-wrap: wrap;
+        }
+
+        .form-control {
+            flex: 1;
+            min-width: 0;
+            padding: 8px;
+            border-radius: 5px 0 0 5px;
+            border: 1px solid #ccc;
+        }
+
+        .search-form .btn {
+            background-color: #633974;
+            color: white;
+            padding: 8px 15px;
+            border-radius: 0 5px 5px 0;
+        }
+
+        @media (max-width: 576px) {
+            .search-form {
+                padding: 0 10px;
+            }
+            .form-control {
+                border-radius: 5px;
+                margin-bottom: 10px;
+            }
+            .search-form .btn {
+                width: 100%;
+                border-radius: 5px;
+            }
+        }
+
+        /* Card Styles */
+        .card {
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3), 0 0 10px rgba(99, 57, 116, 0.6);
+            background-color: #f7f7f9;
+        }
+
+        .card-img-top {
+            width: 100%;
+            aspect-ratio: 4 / 3;
+            object-fit: cover;
+            border-radius: 10px 10px 0 0;
+            transition: transform 0.3s;
+        }
+
+        .card:hover .card-img-top {
+            transform: scale(1.05);
+        }
+
+        .card-title {
+            font-weight: bold;
+            font-size: 16px;
+            margin-top: 10px;
+            text-align: center;
+            color: #5E2C82;
+        }
+
+        .card-body .btn {
+            background-color: #633974;
+            transition: background-color 0.3s ease, box-shadow 0.3s ease;
+            font-size: 12px;
+            padding: 0.3rem 0.5rem;
+        }
+
+        .card-body .btn:hover {
+            background-color: #824896;
+            box-shadow: 0 4px 8px rgba(130, 72, 150, 0.4);
+        }
+
+        .img-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
+        }
+
+        .img-container img {
+            max-width: 100%;
+            max-height: 150px;
+            object-fit: contain;
+        }
+
+        .card-body {
+            padding: 0.5rem;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .card-body .added {
+            display: none;
+            font-size: 12px;
+            margin-top: 0.2rem;
+        }
+
+        .card-body .btn-clicked .added {
+            display: block;
+        }
+
+        .heart-active {
+            color: red !important;
+        }
+
+        @media (max-width: 576px) {
+            .card-title {
+                font-size: 14px;
+            }
+            .card-text {
+                font-size: 12px;
+            }
+            .img-container img {
+                max-height: 120px;
+            }
+            .card-body .btn {
+                font-size: 10px;
+                padding: 0.25rem 0.4rem;
+            }
+            .card-body .added {
+                font-size: 10px;
+            }
+        }
+
+        /* No Results */
+        .no-results {
+            display: none;
+            text-align: center;
+            padding: 10px;
+            margin: 20px auto;
+            max-width: 300px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            background-color: #f9f9f9;
+        }
+
+        .no-results-image {
+            max-width: 50%;
+            height: auto;
+            margin-bottom: 10px;
+        }
+
+        .no-results-text {
+            color: #633974;
+            font-size: 0.9rem;
+            font-weight: 600;
+            margin: 0;
+        }
+
+        @media (max-width: 576px) {
+            .no-results {
+                max-width: 220px;
+                padding: 5px;
+            }
+            .no-results-image {
+                max-width: 40%;
+            }
+            .no-results-text {
+                font-size: 0.8rem;
+            }
+        }
+
+        /* Scroll-to-Top Button */
+        .scroll-to-top {
+            position: fixed;
+            bottom: 110px;
+            right: 15px; /* Moved to right */
+            z-index: 1000;
+            background-color: #633974;
+            color: white;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 20px;
+            font-size: 14px;
+            opacity: 0.8;
+            display: flex;
+            align-items: center;
+        }
+
+        .scroll-to-top i {
+            margin-right: 8px;
+            font-size: 18px;
+        }
+
+        .scroll-to-top:hover {
+            opacity: 1;
+        }
+
+        @keyframes jump {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+
+        .scroll-to-top.jump {
+            animation: jump 0.8s infinite;
+        }
+
+        @media (max-width: 576px) {
+            .scroll-to-top {
+                bottom: 90px;
+                padding: 6px 10px;
+                font-size: 12px;
+            }
+            .scroll-to-top i {
+                font-size: 16px;
+                margin-right: 5px;
+            }
+        }
+
+        /* Footer Styles */
+        .fixed-bottom {
+            background-color: #633974;
+            padding: 10px 0;
+        }
+
+        .nav-item {
+            margin: 0 15px;
+        }
+
+        @media (max-width: 576px) {
+            .nav-item {
+                margin: 5px 10px;
+            }
+            .nav-link {
+                font-size: 0.9rem;
+            }
+            .navbar-nav.flex-row {
+                flex-wrap: wrap;
+                justify-content: center;
+            }
+        }
+
+        /* Map Styles */
+        #map {
+            width: 100%;
+            height: 200px;
+            border-radius: 6px;
+        }
+
+        @media (max-width: 768px) {
+            #map {
+                height: 150px;
+            }
+        }
+
+        /* Blog Images */
+        .custom-img {
+            max-width: 100%;
+            height: auto;
+        }
+    </style>
+</head>
+<body>
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg navbar-dark fixed-top">
+        <div class="container-fluid">
+            <a class="navbar-brand ms-3" href="#">Shopping Realm <i class="bi bi-cart"></i></a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">Our Policy</a>
+                        <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
+                            <li><a class="dropdown-item" href="#">Fast Delivery <i class="bi bi-truck"></i></a></li>
+                            <li><a class="dropdown-item" href="#">Affordable Deals <i class="bi bi-hand-thumbs-up"></i></a></li>
+                            <li><a class="dropdown-item" href="#">Customer Satisfaction</a></li>
+                        </ul>
+                    </li>
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown1" role="button" data-bs-toggle="dropdown" aria-expanded="false">Our Partners</a>
+                        <ul class="dropdown-menu" aria-labelledby="navbarDropdown1">
+                            <li><a class="dropdown-item" href="#">Max</a></li>
+                            <li><a class="dropdown-item" href="#">Trends</a></li>
+                            <li><a class="dropdown-item" href="#">Easy buy</a></li>
+                        </ul>
+                    </li>
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown2" role="button" data-bs-toggle="dropdown" aria-expanded="false">Our Brands</a>
+                        <ul class="dropdown-menu" aria-labelledby="navbarDropdown2">
+                            <li><a class="dropdown-item" href="#">Adidas</a></li>
+                            <li><a class="dropdown-item" href="#">Crocs</a></li>
+                            <li><a class="dropdown-item" href="#">Puma</a></li>
+                        </ul>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+<br>
+<br>
+
+    <!-- Search Form -->
+    <form class="search-form d-flex" role="search">
+        <input class="form-control" type="search" id="searchInput" placeholder="Enter the product name" aria-label="Search">
+        <button class="btn btn-outline-light" type="submit">Search</button>
+    </form>
+
+    <!-- Home Section -->
+    <div id="home" class="container">
+        <div class="row row-cols-2 row-cols-lg-4 g-4">
+            <div class="col">
+                <div id="mens-store" class="card h-100">
+                    <img class="card-img-top" src="https://benle.net/wp-content/uploads/2024/03/Mens-Fashion-Street-Style.webp" alt="Men's fashion">
+                    <h3 class="card-title">Men's Store</h3>
+                </div>
+            </div>
+            <div class="col">
+                <div id="womens-store" class="card h-100">
+                    <img class="card-img-top" src="https://media.istockphoto.com/id/1092715214/photo/two-glad-positive-grinning-lady-stand-in-glasses-spectacles-street-style-stylish-trendy-cool.jpg?s=1024x1024&w=is&k=20&c=-AJ8PWpkIq6tQNUx0OckyFTfT1uOd_BPJdpzQcIgnIk=" alt="Women's fashion">
+                    <h3 class="card-title">Women's Store</h3>
+                </div>
+            </div>
+            <div class="col">
+                <div id="kids-store" class="card h-100">
+                    <img class="card-img-top" src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQIuIkMoj0wWB-rmGn9s7ax4Gxz-WPpKUgOSMHVZrB5m2ndTThKjS36CiU&s" alt="Kid's fashion">
+                    <h3 class="card-title">Kid's Store</h3>
+                </div>
+            </div>
+            <div class="col">
+                <div id="kitchen-store" class="card h-100">
+                    <img class="card-img-top" src="https://www.crompton.co.in/cdn/shop/articles/6KitchApplnc.x11993.jpg?v=1689925741&width=1100" alt="Kitchen essentials">
+                    <h3 class="card-title">Kitchen Store</h3>
+                </div>
+            </div>
+        </div>
+    </div>
+<br>
+
+    <!-- Category Section -->
+    <section id="category" class="container">
+        <!-- Men's Jackets -->
+        <h4 id="mens-category" style="color:#2471A3; margin-bottom: 20px;" class="section-header text-center">Men's Jackets</h4>
+        <div class="row bg-light g-2">
+            <div class="col-lg-3 col-md-4 col-sm-6 col-6 product-card">
+                <div class="card h-100 d-flex flex-column">
+                    <div class="img-container">
+                        <img src="https://us.masons.it/cdn/shop/files/2GB3535CBE436-006_1.jpg?v=1713337885&width=850" class="card-img-top" alt="Winter Warrior Jacket">
+                    </div>
+                    <div class="card-body d-flex flex-column">
+                        <div class="d-flex justify-content-between align-items-center" style="margin-bottom: 0.2rem;">
+                            <div class="rating">
+                                <i class="bi bi-star-fill" style="color:gold; font-size: 12px;"></i>
+                                <i class="bi bi-star-fill" style="color:gold; font-size: 12px;"></i>
+                                <i class="bi bi-star-fill" style="color:gold; font-size: 12px;"></i>
+                                <i class="bi bi-star" style="color:gold; font-size: 12px;"></i>
+                                <i class="bi bi-star" style="color:gold; font-size: 12px;"></i>
+                            </div>
+                            <i class="bi bi-heart" onclick="toggleFavorite(this)" style="color: gray; cursor: pointer; font-size: 14px;"></i>
+                        </div>
+                        <h6 class="card-title" style="color:#2471A3; font-size: 14px; margin-bottom: 0.2rem;">Winter Warrior Jacket</h6>
+                        <h5 class="card-text" style="color:#2471A3; font-size: 14px; text-align: center; margin-bottom: 0.5rem;">$25</h5>
+                        <button id="addToCartBtn1" type="button" class="btn btn-sm text-light mt-auto" style="font-size: 12px; padding: 0.3rem 0.5rem;" onclick="addToCart(this)">Add To Cart</button>
+                        <p class="added"><i class="bi bi-check-circle"></i> Added to Cart</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-3 col-md-4 col-sm-6 col-6 product-card">
+                <div class="card h-100 d-flex flex-column">
+                    <div class="img-container">
+                        <img src="https://media.istockphoto.com/id/1174512994/photo/handsome-man-in-casual-suit.jpg?s=612x612&w=0&k=20&c=lQJmm5MiL3yfFhQiyIkFgH6O5OxZJliMf5ViVEllBoE=" class="card-img-top" alt="Storm Chaser Waterproof Jacket">
+                    </div>
+                    <div class="card-body d-flex flex-column">
+                        <div class="d-flex justify-content-between align-items-center" style="margin-bottom: 0.2rem;">
+                            <div class="rating">
+                                <i class="bi bi-star-fill" style="color:gold; font-size: 12px;"></i>
+                                <i class="bi bi-star-fill" style="color:gold; font-size: 12px;"></i>
+                                <i class="bi bi-star-fill" style="color:gold; font-size: 12px;"></i>
+                                <i class="bi bi-star-fill" style="color:gold; font-size: 12px;"></i>
+                                <i class="bi bi-star-fill" style="color:gold; font-size: 12px;"></i>
+                            </div>
+                            <i class="bi bi-heart" onclick="toggleFavorite(this)" style="color: gray; cursor: pointer; font-size: 14px;"></i>
+                        </div>
+                        <h6 class="card-title" style="color:#2471A3; font-size: 14px; margin-bottom: 0.2rem;">Storm Chaser Waterproof Jacket</h6>
+                        <h5 class="card-text" style="color:#2471A3; font-size: 14px; text-align: center; margin-bottom: 0.5rem;">$35</h5>
+                        <button id="addToCartBtn2" type="button" class="btn btn-sm text-light mt-auto" style="font-size: 12px; padding: 0.3rem 0.5rem;" onclick="addToCart(this)">Add To Cart</button>
+                        <p class="added"><i class="bi bi-check-circle"></i> Added to Cart</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-3 col-md-4 col-sm-6 col-6 product-card">
+                <div class="card h-100 d-flex flex-column">
+                    <div class="img-container">
+                        <img src="https://media.istockphoto.com/id/514779034/photo/portrait-of-confident-handsome-man.jpg?s=612x612&w=0&k=20&c=WemmIFqWuVCwqqZ-Cgn4sTVoVn7C8DlR7485RRSYU_w=" class="card-img-top" alt="EcoLite Recycled Backpack">
+                    </div>
+                    <div class="card-body d-flex flex-column">
+                        <div class="d-flex justify-content-between align-items-center" style="margin-bottom: 0.2rem;">
+                            <div class="rating">
+                                <i class="bi bi-star-fill" style="color:gold; font-size: 12px;"></i>
+                                <i class="bi bi-star-fill" style="color:gold; font-size: 12px;"></i>
+                                <i class="bi bi-star-fill" style="color:gold; font-size: 12px;"></i>
+                                <i class="bi bi-star-fill" style="color:gold; font-size: 12px;"></i>
+                                <i class="bi bi-star" style="color:gold; font-size: 12px;"></i>
+                            </div>
+                            <i class="bi bi-heart" onclick="toggleFavorite(this)" style="color: gray; cursor: pointer; font-size: 14px;"></i>
+                        </div>
+                        <h6 class="card-title" style="color:#2471A3; font-size: 14px; margin-bottom: 0.2rem;">EcoLite Recycled Backpack</h6>
+                        <h5 class="card-text" style="color:#2471A3; font-size: 14px; text-align: center; margin-bottom: 0.5rem;">$25</h5>
+                        <button id="addToCartBtn3" type="button" class="btn btn-sm text-light mt-auto" style="font-size: 12px; padding: 0.3rem 0.5rem;" onclick="addToCart(this)">Add To Cart</button>
+                        <p class="added"><i class="bi bi-check-circle"></i> Added to Cart</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-3 col-md-4 col-sm-6 col-6 product-card">
+                <div class="card h-100 d-flex flex-column">
+                    <div class="img-container">
+                        <img src="https://media.istockphoto.com/id/656534890/photo/style-thats-hot-off-the-street.jpg?s=612x612&w=0&k=20&c=mYOcwSOfZJerMSRvGy3DtJv5xiC5F9K_4GDIGgmEYkE=" class="card-img-top" alt="AdventurePro Hiking Boots">
+                    </div>
+                    <div class="card-body d-flex flex-column">
+                        <div class="d-flex justify-content-between align-items-center" style="margin-bottom: 0.2rem;">
+                            <div class="rating">
+                                <i class="bi bi-star-fill" style="color:gold; font-size: 12px;"></i>
+                                <i class="bi bi-star-fill" style="color:gold; font-size: 12px;"></i>
+                                <i class="bi bi-star-fill" style="color:gold; font-size: 12px;"></i>
+                                <i class="bi bi-star-half" style="color:gold; font-size: 12px;"></i>
+                                <i class="bi bi-star" style="color:gold; font-size: 12px;"></i>
+                            </div>
+                            <i class="bi bi-heart" onclick="toggleFavorite(this)" style="color: gray; cursor: pointer; font-size: 14px;"></i>
+                        </div>
+                        <h6 class="card-title" style="color:#2471A3; font-size: 14px; margin-bottom: 0.2rem;">AdventurePro Hiking Boots</h6>
+                        <h5 class="card-text" style="color:#2471A3; font-size: 14px; text-align: center; margin-bottom: 0.5rem;">$50</h5>
+                        <button id="addToCartBtn4" type="button" class="btn btn-sm text-light mt-auto" style="font-size: 12px; padding: 0.3rem 0.5rem;" onclick="addToCart(this)">Add To Cart</button>
+                        <p class="added"><i class="bi bi-check-circle"></i> Added to Cart</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+<br>
+
+        <!-- Women's Dresses -->
+        <h4 id="womens-category" style="color:#2471A3; margin-bottom: 20px;" class="category-title2 text-center">Women's Dresses</h4>
+        <div class="row bg-light g-2">
+            <div class="col-lg-3 col-md-4 col-sm-6 col-6 product-card">
+                <div class="card h-100 d-flex flex-column">
+                    <div class="img-container">
+                        <img src="https://media.istockphoto.com/id/960208858/photo/beautiful-happy-african-american-young-female-model-wear-dress-in-flowers.jpg?s=612x612&w=0&k=20&c=GBIUpuc3B5uTnM19vhM_Z8eNTEEZr5J5xjtaH5__wWo=" class="card-img-top" alt="Women's Floral Dress">
+                    </div>
+                    <div class="card-body d-flex flex-column">
+                        <div class="d-flex justify-content-between align-items-center" style="margin-bottom: 0.2rem;">
+                            <div class="rating">
+                                <i class="bi bi-star-fill" style="color:gold; font-size: 12px;"></i>
+                                <i class="bi bi-star-fill" style="color:gold; font-size: 12px;"></i>
+                                <i class="bi bi-star-fill" style="color:gold; font-size: 12px;"></i>
+                                <i class="bi bi-star" style="color:gold; font-size: 12px;"></i>
+                                <i class="bi bi-star" style="color:gold; font-size: 12px;"></i>
+                            </div>
+                            <i class="bi bi-heart" onclick="toggleFavorite(this)" style="color: gray; cursor: pointer; font-size: 14px;"></i>
+                        </div>
+                        <h6 class="card-title" style="color:#2471A3; font-size: 14px; margin-bottom: 0.2rem;">Women's Floral Dress</h6>
+                        <h5 class="card-text" style="color:#2471A3; font-size: 14px; text-align: center; margin-bottom: 0.5rem;">$30</h5>
+                        <button type="button" class="btn btn-sm text-light mt-auto" style="font-size: 12px; padding: 0.3rem 0.5rem;" onclick="addToCart(this)">Add To Cart</button>
+                        <p class="added"><i class="bi bi-check-circle"></i> Added to Cart</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-3 col-md-4 col-sm-6 col-6 product-card">
+                <div class="card h-100 d-flex flex-column">
+                    <div class="img-container">
+                        <img src="https://media.istockphoto.com/id/1678639111/photo/charming-young-woman-dancing-in-a-flowy-dress-and-smiling-joyfully-at-camera.jpg?s=612x612&w=0&k=20&c=m4kFRU6-2CWHrLAYcR29kx-auxbiVvELvbKey2gzGFE=" class="card-img-top" alt="Women's Maxi Dress">
+                    </div>
+                    <div class="card-body d-flex flex-column">
+                        <div class="d-flex justify-content-between align-items-center" style="margin-bottom: 0.2rem;">
+                            <div class="rating">
+                                <i class="bi bi-star-fill" style="color:gold; font-size: 12px;"></i>
+                                <i class="bi bi-star-fill" style="color:gold; font-size: 12px;"></i>
+                                <i class="bi bi-star-fill" style="color:gold; font-size: 12px;"></i>
+                                <i class="bi bi-star-fill" style="color:gold; font-size: 12px;"></i>
+                                <i class="bi bi-star-fill" style="color:gold; font-size: 12px;"></i>
+                            </div>
+                            <i class="bi bi-heart" onclick="toggleFavorite(this)" style="color: gray; cursor: pointer; font-size: 14px;"></i>
+                        </div>
+                        <h6 class="card-title" style="color:#2471A3; font-size: 14px; margin-bottom: 0.2rem;">Women's Maxi Dress</h6>
+                        <h5 class="card-text" style="color:#2471A3; font-size: 14px; text-align: center; margin-bottom: 0.5rem;">$45</h5>
+                        <button type="button" class="btn btn-sm text-light mt-auto" style="font-size: 12px; padding: 0.3rem 0.5rem;" onclick="addToCart(this)">Add To Cart</button>
+                        <p class="added"><i class="bi bi-check-circle"></i> Added to Cart</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-3 col-md-4 col-sm-6 col-6 product-card">
+                <div class="card h-100 d-flex flex-column">
+                    <div class="img-container">
+                        <img src="https://media.istockphoto.com/id/1407049695/photo/fashion-model-in-green-silk-dress-beauty-woman-in-long-satin-evening-gown-over-white-elegant.jpg?s=612x612&w=0&k=20&c=wdnDsMToEEOSSJw9h97XkgCc3jOW1ezTSiduiDp1Uxc=" class="card-img-top" alt="Elegant Evening Dress">
+                    </div>
+                    <div class="card-body d-flex flex-column">
+                        <div class="d-flex justify-content-between align-items-center" style="margin-bottom: 0.2rem;">
+                            <div class="rating">
+                                <i class="bi bi-star-fill" style="color:gold; font-size: 12px;"></i>
+                                <i class="bi bi-star-fill" style="color:gold; font-size: 12px;"></i>
+                                <i class="bi bi-star-fill" style="color:gold; font-size: 12px;"></i>
+                                <i class="bi bi-star" style="color:gold; font-size: 12px;"></i>
+                                <i class="bi bi-star" style="color:gold; font-size: 12px;"></i>
+                            </div>
+                            <i class="bi bi-heart" onclick="toggleFavorite(this)" style="color: gray; cursor: pointer; font-size: 14px;"></i>
+                        </div>
+                        <h6 class="card-title" style="color:#2471A3; font-size: 14px; margin-bottom: 0.2rem;">Elegant Evening Dress</h6>
+                        <h5 class="card-text" style="color:#2471A3; font-size: 14px; text-align: center; margin-bottom: 0.5rem;">$60</h5>
+                        <button type="button" class="btn btn-sm text-light mt-auto" style="font-size: 12px; padding: 0.3rem 0.5rem;" onclick="addToCart(this)">Add To Cart</button>
+                        <p class="added"><i class="bi bi-check-circle"></i> Added to Cart</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-3 col-md-4 col-sm-6 col-6 product-card">
+                <div class="card h-100 d-flex flex-column">
+                    <div class="img-container">
+                        <img src="https://media.istockphoto.com/id/163218641/photo/happy-young-woman-with-flowers.jpg?s=612x612&w=0&k=20&c=hufZrGwqcxLsbR3FUrS3JkB-AuPugJU3ILSiIEGwCgs=" class="card-img-top" alt="Casual Summer Dress">
+                    </div>
+                    <div class="card-body d-flex flex-column">
+                        <div class="d-flex justify-content-between align-items-center" style="margin-bottom: 0.2rem;">
+                            <div class="rating">
+                                <i class="bi bi-star-fill" style="color:gold; font-size: 12px;"></i>
+                                <i class="bi bi-star-fill" style="color:gold; font-size: 12px;"></i>
+                                <i class="bi bi-star-fill" style="color:gold; font-size: 12px;"></i>
+                                <i class="bi bi-star-half" style="color:gold; font-size: 12px;"></i>
+                                <i class="bi bi-star" style="color:gold; font-size: 12px;"></i>
+                            </div>
+                            <i class="bi bi-heart" onclick="toggleFavorite(this)" style="color: gray; cursor: pointer; font-size: 14px;"></i>
+                        </div>
+                        <h6 class="card-title" style="color:#2471A3; font-size: 14px; margin-bottom: 0.2rem;">Casual Summer Dress</h6>
+                        <h5 class="card-text" style="color:#2471A3; font-size: 14px; text-align: center; margin-bottom: 0.5rem;">$35</h5>
+                        <button type="button" class="btn btn-sm text-light mt-auto" style="font-size: 12px; padding: 0.3rem 0.5rem;" onclick="addToCart(this)">Add To Cart</button>
+                        <p class="added"><i class="bi bi-check-circle"></i> Added to Cart</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+<br>
+
+        <!-- Women's Tops -->
+        <h4 id="womens-tops-category" style="color:#2471A3; margin-bottom: 20px;" class="category-title3 text-center">Women's Tops</h4>
+        <div class="row bg-light g-2">
+            <div class="col-lg-3 col-md-4 col-sm-6 col-6 product-card">
+                <div class="card h-100 d-flex flex-column">
+                    <div class="img-container">
+                        <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR1_t6e_ezVSdvT5AWE7eqSK9G7ya0oIPTcTaDxJg-JvQKUGVw8ctB-4eY2&s=10" class="card-img-top" alt="Women's Graphic T-shirt">
+                    </div>
+                    <div class="card-body d-flex flex-column">
+                        <div class="d-flex justify-content-between align-items-center" style="margin-bottom: 0.2rem;">
+                            <div class="rating">
+                                <i class="bi bi-star-fill" style="color:gold; font-size: 12px;"></i>
+                                <i class="bi bi-star-fill" style="color:gold; font-size: 12px;"></i>
+                                <i class="bi bi-star-fill" style="color:gold; font-size: 12px;"></i>
+                                <i class="bi bi-star" style="color:gold; font-size: 12px;"></i>
+                                <i class="bi bi-star" style="color:gold; font-size: 12px;"></i>
+                            </div>
+                            <i class="bi bi-heart" onclick="toggleFavorite(this)" style="color: gray; cursor: pointer; font-size: 14px;"></i>
+                        </div>
+                        <h6 class="card-title" style="color:#2471A3; font-size: 14px; margin-bottom: 0.2rem;">Women's Graphic T-shirt</h6>
+                        <h5 class="card-text" style="color:#2471A3; font-size: 14px; text-align: center; margin-bottom: 0.5rem;">$15</h5>
+                        <button type="button" class="btn btn-sm text-light mt-auto" style="font-size: 12px; padding: 0.3rem 0.5rem;" onclick="addToCart(this)">Add To Cart</button>
+                        <p class="added"><i class="bi bi-check-circle"></i> Added to Cart</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-3 col-md-4 col-sm-6 col-6 product-card">
+                <div class="card h-100 d-flex flex-column">
+                    <div class="img-container">
+                        <img src="https://imagescdn.simons.ca/images/12709-217917-31-A1_3/crew-neck-satiny-cami.jpg?__=19" class="card-img-top" alt="Women's Sleeveless">
+                    </div>
+                    <div class="card-body d-flex flex-column">
+                        <div class="d-flex justify-content-between align-items-center" style="margin-bottom: 0.2rem;">
+                            <div class="rating">
+                                <i class="bi bi-star-fill" style="color:gold; font-size: 12px;"></i>
+                                <i class="bi bi-star-fill" style="color:gold; font-size: 12px;"></i>
+                                <i class="bi bi-star-fill" style="color:gold; font-size: 12px;"></i>
+                                <i class="bi bi-star-fill" style="color:gold; font-size: 12px;"></i>
+                                <i class="bi bi-star-fill" style="color:gold; font-size: 12px;"></i>
+                            </div>
+                            <i class="bi bi-heart" onclick="toggleFavorite(this)" style="color: gray; cursor: pointer; font-size: 14px;"></i>
+                        </div>
+                        <h6 class="card-title" style="color:#2471A3; font-size: 14px; margin-bottom: 0.2rem;">Women's Sleeveless</h6>
+                        <h5 class="card-text" style="color:#2471A3; font-size: 14px; text-align: center; margin-bottom: 0.5rem;">$25</h5>
+                        <button type="button" class="btn btn-sm text-light mt-auto" style="font-size: 12px; padding: 0.3rem 0.5rem;" onclick="addToCart(this)">Add To Cart</button>
+                        <p class="added"><i class="bi bi-check-circle"></i> Added to Cart</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-3 col-md-4 col-sm-6 col-6 product-card">
+                <div class="card h-100 d-flex flex-column">
+                    <div class="img-container">
+                        <img src="https://media.istockphoto.com/id/1172196550/photo/photo-of-cheerful-confident-nice-fascinating-attractive-girl-confidently-standing-in-front-of.jpg?s=612x612&w=0&k=20&c=Im05feL-kYxSFct2_BtanPkDnlnQUmXk0eDAEyeTloA=" class="card-img-top" alt="Women's Tank Top">
+                    </div>
+                    <div class="card-body d-flex flex-column">
+                        <div class="d-flex justify-content-between align-items-center" style="margin-bottom: 0.2rem;">
+                            <div class="rating">
+                                <i class="bi bi-star-fill" style="color:gold; font-size: 12px;"></i>
+                                <i class="bi bi-star-fill" style="color:gold; font-size: 12px;"></i>
+                                <i class="bi bi-star-fill" style="color:gold; font-size: 12px;"></i>
+                                <i class="bi bi-star" style="color:gold; font-size: 12px;"></i>
+                                <i class="bi bi-star" style="color:gold; font-size: 12px;"></i>
+                            </div>
+                            <i class="bi bi-heart" onclick="toggleFavorite(this)" style="color: gray; cursor: pointer; font-size: 14px;"></i>
+                        </div>
+                        <h6 class="card-title" style="color:#2471A3; font-size: 14px; margin-bottom: 0.2rem;">Women's Tank Top</h6>
+                        <h5 class="card-text" style="color:#2471A3; font-size: 14px; text-align: center; margin-bottom: 0.5rem;">$10</h5>
+                        <button type="button" class="btn btn-sm text-light mt-auto" style="font-size: 12px; padding: 0.3rem 0.5rem;" onclick="addToCart(this)">Add To Cart</button>
+                        <p class="added"><i class="bi bi-check-circle"></i> Added to Cart</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-3 col-md-4 col-sm-6 col-6 product-card">
+                <div class="card h-100 d-flex flex-column">
+                    <div class="img-container">
+                        <img src="https://media.landmarkshops.in/cdn-cgi/image/h=739,w=499,q=85,fit=cover/max-new/1000014169862-Yellow-YELLOW-1000014169862_02-2100.jpg" class="card-img-top" alt="Women's Casual Top">
+                    </div>
+                    <div class="card-body d-flex flex-column">
+                        <div class="d-flex justify-content-between align-items-center" style="margin-bottom: 0.2rem;">
+                            <div class="rating">
+                                <i class="bi bi-star-fill" style="color:gold; font-size: 12px;"></i>
+                                <i class="bi bi-star-fill" style="color:gold; font-size: 12px;"></i>
+                                <i class="bi bi-star-fill" style="color:gold; font-size: 12px;"></i>
+                                <i class="bi bi-star" style="color:gold; font-size: 12px;"></i>
+                                <i class="bi bi-star" style="color:gold; font-size: 12px;"></i>
+                            </div>
+                            <i class="bi bi-heart" onclick="toggleFavorite(this)" style="color: gray; cursor: pointer; font-size: 14px;"></i>
+                        </div>
+                        <h6 class="card-title" style="color:#2471A3; font-size: 14px; margin-bottom: 0.2rem;">Women's Casual Top</h6>
+                        <h5 class="card-text" style="color:#2471A3; font-size: 14px; text-align: center; margin-bottom: 0.5rem;">$20</h5>
+                        <button type="button" class="btn btn-sm text-light mt-auto" style="font-size: 12px; padding: 0.3rem 0.5rem;" onclick="addToCart(this)">Add To Cart</button>
+                        <p class="added"><i class="bi bi-check-circle"></i> Added to Cart</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+<br>
+
+        <!-- Kid's Clothing -->
+        <h4 id="kids-category" style="color:#2471A3; margin-bottom: 20px;" class="category-title4 text-center">Kid's Clothing</h4>
+        <div class="row bg-light g-2">
+            <div class="col-lg-3 col-md-4 col-sm-6 col-6 product-card">
+                <div class="card h-100 d-flex flex-column">
+                    <div class="img-container">
+                        <img src="https://images.puma.net/images/624844/63/mod01/fnd/IND/w/800/h/800/" class="card-img-top" alt="Kids' Graphic T-shirt">
+                    </div>
+                    <div class="card-body d-flex flex-column">
+                        <div class="d-flex justify-content-between align-items-center" style="margin-bottom: 0.2rem;">
+                            <div class="rating">
+                                <i class="bi bi-star-fill" style="color:gold; font-size: 12px;"></i>
+                                <i class="bi bi-star-fill" style="color:gold; font-size: 12px;"></i>
+                                <i class="bi bi-star-fill" style="color:gold; font-size: 12px;"></i>
+                                <i class="bi bi-star" style="color:gold; font-size: 12px;"></i>
+                                <i class="bi bi-star" style="color:gold; font-size: 12px;"></i>
+                            </div>
+                            <i class="bi bi-heart" onclick="toggleFavorite(this)" style="color: gray; cursor: pointer; font-size: 14px;"></i>
+                        </div>
+                        <h6 class="card-title" style="color:#2471A3; font-size: 14px; margin-bottom: 0.2rem;">Kids' Graphic T-shirt</h6>
+                        <h5 class="card-text" style="color:#2471A3; font-size: 14px; text-align: center; margin-bottom: 0.5rem;">$12</h5>
+                        <button type="button" class="btn btn-sm text-light mt-auto" style="font-size: 12px; padding: 0.3rem 0.5rem;" onclick="addToCart(this)">Add To Cart</button>
+                        <p class="added"><i class="bi bi-check-circle"></i> Added to Cart</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-3 col-md-4 col-sm-6 col-6 product-card">
+                <div class="card h-100 d-flex flex-column">
+                    <div class="img-container">
+                        <img src="https://www.optimized-rlmedia.io/is/image/PoloGSI/s7-1347927_alternate10?$plpDeskRF$" class="card-img-top" alt="Kids' Hoodie">
+                    </div>
+                    <div class="card-body d-flex flex-column">
+                        <div class="d-flex justify-content-between align-items-center" style="margin-bottom: 0.2rem;">
+                            <div class="rating">
+                                <i class="bi bi-star-fill" style="color:gold; font-size: 12px;"></i>
+                                <i class="bi bi-star-fill" style="color:gold; font-size: 12px;"></i>
+                                <i class="bi bi-star-fill" style="color:gold; font-size: 12px;"></i>
+                                <i class="bi bi-star-fill" style="color:gold; font-size: 12px;"></i>
+                                <i class="bi bi-star-fill" style="color:gold; font-size: 12px;"></i>
+                            </div>
+                            <i class="bi bi-heart" onclick="toggleFavorite(this)" style="color: gray; cursor: pointer; font-size: 14px;"></i>
+                        </div>
+                        <h6 class="card-title" style="color:#2471A3; font-size: 14px; margin-bottom: 0.2rem;">Kids' Hoodie</h6>
+                        <h5 class="card-text" style="color:#2471A3; font-size: 14px; text-align: center; margin-bottom: 0.5rem;">$20</h5>
+                        <button type="button" class="btn btn-sm text-light mt-auto" style="font-size: 12px; padding: 0.3rem 0.5rem;" onclick="addToCart(this)">Add To Cart</button>
+                        <p class="added"><i class="bi bi-check-circle"></i> Added to Cart</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-3 col-md-4 col-sm-6 col-6 product-card">
+                <div class="card h-100 d-flex flex-column">
+                    <div class="img-container">
+                        <img src="https://www.ardene.com/on/demandware.static/-/Sites-master-catalog/default/dw4005d04d/images/large/4A-AP31216-03-9c30991f-9767-4c16-b74b-42265293f647.jpg" class="card-img-top" alt="Kids' Jeans">
+                    </div>
+                    <div class="card-body d-flex flex-column">
+                        <div class="d-flex justify-content-between align-items-center" style="margin-bottom: 0.2rem;">
+                            <div class="rating">
+                                <i class="bi bi-star-fill" style="color:gold; font-size: 12px;"></i>
+                                <i class="bi bi-star-fill" style="color:gold; font-size: 12px;"></i>
+                                <i class="bi bi-star-fill" style="color:gold; font-size: 12px;"></i>
+                                <i class="bi bi-star" style="color:gold; font-size: 12px;"></i>
+                                <i class="bi bi-star" style="color:gold; font-size: 12px;"></i>
+                            </div>
+                            <i class="bi bi-heart" onclick="toggleFavorite(this)" style="color: gray; cursor: pointer; font-size: 14px;"></i>
+                        </div>
+                        <h6 class="card-title" style="color:#2471A3; font-size: 14px; margin-bottom: 0.2rem;">Kids' Jeans</h6>
+                        <h5 class="card-text" style="color:#2471A3; font-size: 14px; text-align: center; margin-bottom: 0.5rem;">$25</h5>
+                        <button type="button" class="btn btn-sm text-light mt-auto" style="font-size: 12px; padding: 0.3rem 0.5rem;" onclick="addToCart(this)">Add To Cart</button>
+                        <p class="added"><i class="bi bi-check-circle"></i> Added to Cart</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-3 col-md-4 col-sm-6 col-6 product-card">
+                <div class="card h-100 d-flex flex-column">
+                    <div class="img-container">
+                        <img src="https://cdn.shopify.com/s/files/1/0576/7902/0209/files/cn55071072.jpg?v=1713497045" class="card-img-top" alt="Kid's Shorts">
+                    </div>
+                    <div class="card-body d-flex flex-column">
+                        <div class="d-flex justify-content-between align-items-center" style="margin-bottom: 0.2rem;">
+                            <div class="rating">
+                                <i class="bi bi-star-fill" style="color:gold; font-size: 12px;"></i>
+                                <i class="bi bi-star-fill" style="color:gold; font-size: 12px;"></i>
+                                <i class="bi bi-star-fill" style="color:gold; font-size: 12px;"></i>
+                                <i class="bi bi-star" style="color:gold; font-size: 12px;"></i>
+                                <i class="bi bi-star" style="color:gold; font-size: 12px;"></i>
+                            </div>
+                            <i class="bi bi-heart" onclick="toggleFavorite(this)" style="color: gray; cursor: pointer; font-size: 14px;"></i>
+                        </div>
+                        <h6 class="card-title" style="color:#2471A3; font-size: 14px; margin-bottom: 0.2rem;">Kid's Shorts</h6>
+                        <h5 class="card-text" style="color:#2471A3; font-size: 14px; text-align: center; margin-bottom: 0.5rem;">$25</h5>
+                        <button type="button" class="btn btn-sm text-light mt-auto" style="font-size: 12px; padding: 0.3rem 0.5rem;" onclick="addToCart(this)">Add To Cart</button>
+                        <p class="added"><i class="bi bi-check-circle"></i> Added to Cart</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+<br>
+
+        <!-- Kitchen Accessories -->
+        <h4 id="kitchen-category" style="color:#2471A3; margin-bottom: 20px;" class="category-title5 text-center">Kitchen Accessories</h4>
+        <div class="row bg-light g-2">
+            <div class="col-lg-3 col-md-4 col-sm-6 col-6 product-card">
+                <div class="card h-100 d-flex flex-column">
+                    <div class="img-container">
+                        <img src="https://plus.unsplash.com/premium_photo-1664391825760-17aacf4cb3b4?q=80&w=1375&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" class="card-img-top" alt="Stainless Steel Cookware Set">
+                    </div>
+                    <div class="card-body d-flex flex-column">
+                        <div class="d-flex justify-content-between align-items-center" style="margin-bottom: 0.2rem;">
+                            <div class="rating">
+                                <i class="bi bi-star-fill" style="color:gold; font-size: 12px;"></i>
+                                <i class="bi bi-star-fill" style="color:gold; font-size: 12px;"></i>
+                                <i class="bi bi-star-fill" style="color:gold; font-size: 12px;"></i>
+                                <i class="bi bi-star" style="color:gold; font-size: 12px;"></i>
+                                <i class="bi bi-star" style="color:gold; font-size: 12px;"></i>
+                            </div>
+                            <i class="bi bi-heart" onclick="toggleFavorite(this)" style="color: gray; cursor: pointer; font-size: 14px;"></i>
+                        </div>
+                        <h6 class="card-title" style="color:#2471A3; font-size: 14px; margin-bottom: 0.2rem;">Stainless Steel Cookware Set</h6>
+                        <h5 class="card-text" style="color:#2471A3; font-size: 14px; text-align: center; margin-bottom: 0.5rem;">$50</h5>
+                        <button type="button" class="btn btn-sm text-light mt-auto" style="font-size: 12px; padding: 0.3rem 0.5rem;" onclick="addToCart(this)">Add To Cart</button>
+                        <p class="added"><i class="bi bi-check-circle"></i> Added to Cart</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-3 col-md-4 col-sm-6 col-6 product-card">
+                <div class="card h-100 d-flex flex-column">
+                    <div class="img-container">
+                        <img src="https://media.istockphoto.com/id/1221018623/photo/kitchen-knifes-inventory-on-wooden-backgroun-in-a-row.jpg?s=612x612&w=0&k=20&c=0CKg7Ewo5-cQJl1Zal0YU1vLyQUyvDpRfVWGGMe5BQM=" class="card-img-top" alt="Kitchen Knife Set">
+                    </div>
+                    <div class="card-body d-flex flex-column">
+                        <div class="d-flex justify-content-between align-items-center" style="margin-bottom: 0.2rem;">
+                            <div class="rating">
+                                <i class="bi bi-star-fill" style="color:gold; font-size: 12px;"></i>
+                                <i class="bi bi-star-fill" style="color:gold; font-size: 12px;"></i>
+                                <i class="bi bi-star-fill" style="color:gold; font-size: 12px;"></i>
+                                <i class="bi bi-star-fill" style="color:gold; font-size: 12px;"></i>
+                                <i class="bi bi-star-fill" style="color:gold; font-size: 12px;"></i>
+                            </div>
+                            <i class="bi bi-heart" onclick="toggleFavorite(this)" style="color: gray; cursor: pointer; font-size: 14px;"></i>
+                        </div>
+                        <h6 class="card-title" style="color:#2471A3; font-size: 14px; margin-bottom: 0.2rem;">Kitchen Knife Set</h6>
+                        <h5 class="card-text" style="color:#2471A3; font-size: 14px; text-align: center; margin-bottom: 0.5rem;">$30</h5>
+                        <button type="button" class="btn btn-sm text-light mt-auto" style="font-size: 12px; padding: 0.3rem 0.5rem;" onclick="addToCart(this)">Add To Cart</button>
+                        <p class="added"><i class="bi bi-check-circle"></i> Added to Cart</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-3 col-md-4 col-sm-6 col-6 product-card">
+                <div class="card h-100 d-flex flex-column">
+                    <div class="img-container">
+                        <img src="https://myborosil.com/cdn/shop/products/my-borosil-mixing-serving-bowls-500-ml-900-ml-1-3-l-mixing-bowl-w-blue-lid-set-of-3-29687348396170.jpg" class="card-img-top" alt="Mixing Bowls Set">
+                    </div>
+                    <div class="card-body d-flex flex-column">
+                        <div class="d-flex justify-content-between align-items-center" style="margin-bottom: 0.2rem;">
+                            <div class="rating">
+                                <i class="bi bi-star-fill" style="color:gold; font-size: 12px;"></i>
+                                <i class="bi bi-star-fill" style="color:gold; font-size: 12px;"></i>
+                                <i class="bi bi-star-fill" style="color:gold; font-size: 12px;"></i>
+                                <i class="bi bi-star" style="color:gold; font-size: 12px;"></i>
+                                <i class="bi bi-star" style="color:gold; font-size: 12px;"></i>
+                            </div>
+                            <i class="bi bi-heart" onclick="toggleFavorite(this)" style="color: gray; cursor: pointer; font-size: 14px;"></i>
+                        </div>
+                        <h6 class="card-title" style="color:#2471A3; font-size: 14px; margin-bottom: 0.2rem;">Mixing Bowls Set</h6>
+                        <h5 class="card-text" style="color:#2471A3; font-size: 14px; text-align: center; margin-bottom: 0.5rem;">$25</h5>
+                        <button type="button" class="btn btn-sm text-light mt-auto" style="font-size: 12px; padding: 0.3rem 0.5rem;" onclick="addToCart(this)">Add To Cart</button>
+                        <p class="added"><i class="bi bi-check-circle"></i> Added to Cart</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-3 col-md-4 col-sm-6 col-6 product-card">
+                <div class="card h-100 d-flex flex-column">
+                    <div class="img-container">
+                        <img src="https://m.media-amazon.com/images/I/81FVVi4gO2L._AC_UF894,1000_QL80_.jpg" class="card-img-top" alt="Silicone Baking Mat">
+                    </div>
+                    <div class="card-body d-flex flex-column">
+                        <div class="d-flex justify-content-between align-items-center" style="margin-bottom: 0.2rem;">
+                            <div class="rating">
+                                <i class="bi bi-star-fill" style="color:gold; font-size: 12px;"></i>
+                                <i class="bi bi-star-fill" style="color:gold; font-size: 12px;"></i>
+                                <i class="bi bi-star-fill" style="color:gold; font-size: 12px;"></i>
+                                <i class="bi bi-star" style="color:gold; font-size: 12px;"></i>
+                                <i class="bi bi-star" style="color:gold; font-size: 12px;"></i>
+                            </div>
+                            <i class="bi bi-heart" onclick="toggleFavorite(this)" style="color: gray; cursor: pointer; font-size: 14px;"></i>
+                        </div>
+                        <h6 class="card-title" style="color:#2471A3; font-size: 14px; margin-bottom: 0.2rem;">Silicone Baking Mat</h6>
+                        <h5 class="card-text" style="color:#2471A3; font-size: 14px; text-align: center; margin-bottom: 0.5rem;">$15</h5>
+                        <button type="button" class="btn btn-sm text-light mt-auto" style="font-size: 12px; padding: 0.3rem 0.5rem;" onclick="addToCart(this)">Add To Cart</button>
+                        <p class="added"><i class="bi bi-check-circle"></i> Added to Cart</p>
+                    </div>
+                </div>
+            </div>
+            <!-- No Results Illustration -->
+            <div id="noResults" class="no-results">
+                <img src="https://cdn.pixabay.com/animation/2022/11/01/09/21/09-21-24-793_512.gif" alt="No results illustration" class="no-results-image">
+                <p class="no-results-text">"Oops! No matches found. Try refining your filters."</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Blog Section -->
+    <section id="blog" class="container">
+        <h3 class="text-center" style="color:#633974"><u>Sunglasses</u></h3>
+        <div class="text-center">
+            <img class="custom-img" src="https://images.unsplash.com/photo-1511499767150-a48a237f0083?w=1000&auto=format&fit=crop&q=60&ixlib=rb-4.0.3" height="150" width="250" alt="">
+            <p style="color:#633974"><i>Get Protection from UV Radiation. Wearing sunglasses is the best and easiest way to protect your eyes from harmful UV rays.</i></p>
+            <a href="https://www.thesunglassfix.com/blog" style="background-color:#633974; color:white; padding: 5px 10px; text-decoration: none;">read more...</a>
+        </div>
+        <h3 class="text-center" style="color:#633974"><u>Microwave Oven</u></h3>
+        <div class="text-center">
+            <img class="custom-img" src="https://media.istockphoto.com/id/1351458571/photo/microwave-oven.jpg?s=612x612&w=0&k=20&c=Uozg-oq34rYwihyQC7VHvfZZ4iwnCOvKKC13u12dn7c=" height="150" width="200" alt="">
+            <p style="color:#633974"><i>Using a microwave oven to cook food saves your time and makes food tastier.</i></p>
+            <a href="https://gaux.eu/en/blog/commercial-convection-oven-benefits-for-your-business/" style="background-color:#633974; color:white; padding: 5px 10px; text-decoration: none;">read more...</a>
+        </div>
+        <h3 class="text-center" style="color:#633974"><u>Chimney</u></h3>
+        <div class="text-center">
+            <img class="custom-img" src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQBGKGj8F_BkQIlAwXCUwfEHkmbHgUX4-FslSUb9e80xeXh_3KKmMBmXEg&s " height="150" width="250" alt="">
+            <p style="color:#633974"><i>Installing a kitchen chimney in your home comes with a range of benefits that can make your cooking experience more enjoyable and hassle-free.</i></p>
+            <a href="https://www.cartgo.in/blog/top-5-benefits-of-using-cartgo-kitchen-chimney-at-your-home" style="background-color:#633974; color:white; padding: 5px 10px; text-decoration: none;">read more...</a>
+        </div>
+    </section>
+
+    <!-- Contact Section -->
+    <section id="contact" class="container">
+        <div class="card mb-4" style="border-color:#633974; border-radius:6px; background-color:#633974;">
+            <div class="card-body">
+                <h3 class="card-title text-center" style="color:white;"><b><u>Contact Us</b></u></h3>
+                <div class="row">
+                    <div class="col-md-6" style="padding-left: 20px; margin-top: 20px;">
+                        <p class="card-text" style="color:white;">
+                            <span class="fw-bold">Shopping Realm</span><br>
+                            <u>Address</u>: NO:142, Columbia St<br>
+                            Vancouver,<br>
+                            Canada-V5K 0A3.<br>
+                            <u>Phone</u>: (604) 555-9876<br>
+                            <u>Email</u>: shoppingRealm@gmail.com
+                        </p>
+                    </div>
+                    <div class="col-md-6 d-flex justify-content-center align-items-center flex-column">
+                        <div id="map" style="width: 100%; height: 200px; margin-top: 20px;"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="card" style="border-color:#633974; border-radius:6px; background-color:#633974;">
+            <div class="card-body">
+                <h4 class="card-title text-center" style="color:white;"><i><u>Subscribe for our Newsletter</u> <i class="fas fa-newspaper"></i></i></h4>
+                <form id="newsletter-form" class="d-flex flex-column align-items-center" role="search">
+                    <input id="email-input" class="form-control me-2 mb-2" type="email" placeholder="Enter your email address" aria-label="Search" required>
+                    <button id="subscribe-btn" class="btn btn-outline-light mt-2" type="submit">Subscribe</button>
+                    <div id="success-message" class="text-center mt-4" style="display: none;">
+                        <img src="https://cdn.pixabay.com/animation/2022/07/31/15/26/15-26-01-814_512.gif" alt="Celebration Illustration" width="100" height="100">
+                        <p class="text-light mt-2">Thank you for subscribing!</p>
+                    </div>
+                </form>
+                <p class="text-center text-light mt-2">Be the first one to catch up on our launches instantly.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="navbar navbar-dark fixed-bottom">
+        <div class="container-fluid d-flex justify-content-center">
+            <ul class="navbar-nav d-flex flex-row text-light">
+                <li class="nav-item">
+                    <a class="nav-link" href="#home" id="homeshow">Home</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#category" id="cat">Categories</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#blog" id="blo">Blog</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#contact" id="con">Contact</a>
+                </li>
+            </ul>
+        </div>
+    </footer>
+
+    <!-- Scroll-to-Top Button -->
+    <button id="scrollToTop" class="scroll-to-top" style="display: none;">
+        <i class="bi bi-arrow-up-circle-fill"></i> Back to Top
+    </button>
+
+    <!-- Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // Mapbox Initialization
+        mapboxgl.accessToken = 'pk.eyJ1IjoiY2hyaWRkeXAiLCJhIjoiRy1GV1FoNCJ9.yUPu7qwD_Eqf_gKNzDrrCQ'; // Replace with your valid token
+        const map = new mapboxgl.Map({
+            container: 'map',
+            style: 'mapbox://styles/mapbox/streets-v12',
+            center: [-123.1216, 49.2827],
+            zoom: 10
+        });
+
+        // Scroll-to-Top Functionality
+        document.addEventListener('DOMContentLoaded', function() {
+            const scrollToTopBtn = document.getElementById("scrollToTop");
+            window.onscroll = function() {
+                if (document.body.scrollTop > 20 || document.documentElement.scrollTop > 20) {
+                    scrollToTopBtn.style.display = "block";
+                    scrollToTopBtn.classList.add('jump');
+                    setTimeout(() => scrollToTopBtn.classList.remove('jump'), 800);
+                } else {
+                    scrollToTopBtn.style.display = "none";
+                }
+            };
+            scrollToTopBtn.addEventListener('click', function() {
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            });
+        });
+
+        // Add to Cart
+        function addToCart(button) {
+            button.innerHTML = '<i class="bi bi-check-circle-fill"></i> Added to Cart';
+            button.disabled = true;
+            setTimeout(() => {
+                button.innerHTML = 'Add To Cart';
+                button.disabled = false;
+            }, 2000);
+        }
+
+        // Toggle Favorite
+        function toggleFavorite(heartIcon) {
+            if (heartIcon.classList.contains('bi-heart')) {
+                heartIcon.classList.remove('bi-heart');
+                heartIcon.classList.add('bi-heart-fill');
+                heartIcon.style.color = 'red';
+            } else {
+                heartIcon.classList.remove('bi-heart-fill');
+                heartIcon.classList.add('bi-heart');
+                heartIcon.style.color = 'gray';
+            }
+        }
+
+        // Search Functionality
+        document.addEventListener('DOMContentLoaded', () => {
+            const searchInput = document.getElementById("searchInput");
+            const categoryHeaders = document.querySelectorAll('.section-header, .category-title2, .category-title3, .category-title4, .category-title5');
+            const productCards = document.querySelectorAll('.product-card');
+            const noResults = document.getElementById('noResults');
+
+            searchInput.addEventListener('input', function() {
+                const searchValue = this.value.toLowerCase();
+                let anyMatchOverall = false;
+
+                categoryHeaders.forEach(header => {
+                    const section = header.closest('section');
+                    const cardsInSection = section ? section.querySelectorAll('.product-card') : [];
+                    let hasMatch = false;
+
+                    cardsInSection.forEach(card => {
+                        const productTitle = card.querySelector('.card-title').textContent.toLowerCase();
+                        if (productTitle.includes(searchValue)) {
+                            card.style.display = '';
+                            hasMatch = true;
+                            anyMatchOverall = true;
+                        } else {
+                            card.style.display = 'none';
+                        }
+                    });
+
+                    header.style.display = hasMatch ? '' : 'none';
+                });
+
+                noResults.style.display = anyMatchOverall ? 'none' : 'block';
+            });
+        });
+
+        // Scroll to Category
+        function scrollToCategory(categoryId) {
+            const categoryElement = document.getElementById(categoryId);
+            if (categoryElement) {
+                categoryElement.scrollIntoView({ behavior: 'smooth' });
+            }
+        }
+
+        document.getElementById('mens-store').addEventListener('click', () => scrollToCategory('mens-category'));
+        document.getElementById('womens-store').addEventListener('click', () => scrollToCategory('womens-category'));
+        document.getElementById('kids-store').addEventListener('click', () => scrollToCategory('kids-category'));
+        document.getElementById('kitchen-store').addEventListener('click', () => scrollToCategory('kitchen-category'));
+
+        // Newsletter Subscription
+        document.addEventListener('DOMContentLoaded', () => {
+            const form = document.getElementById('newsletter-form');
+            const emailInput = document.getElementById('email-input');
+            const subscribeBtn = document.getElementById('subscribe-btn');
+            const successMessage = document.getElementById('success-message');
+
+            form.addEventListener('submit', (e) => {
+                e.preventDefault();
+                const email = emailInput.value.trim();
+                const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+
+if (email && emailRegex.test(email)) {
+subscribeBtn.textContent = 'Subscribing...';
+subscribeBtn.disabled = true;
+
+// Simulate an API call or subscription process
+setTimeout(() => {
+form.style.display = 'none'; // Hide the form
+successMessage.style.display = 'block'; // Show success message
+emailInput.value = ''; // Clear input
+subscribeBtn.textContent = 'Subscribe'; // Reset button text
+subscribeBtn.disabled = false; // Re-enable button
+}, 1000); // Simulate a 1-second delay
+} else {
+alert('Please enter a valid email address.');
+}
+});
+});
+</script>
+</body>
+</html>
